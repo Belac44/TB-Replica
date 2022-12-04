@@ -7,6 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 # from model_build import ModelBuild
 from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy.exc import IntegrityError
+from datetime import datetime
 import os
 
 photos = UploadSet("photos", IMAGES)
@@ -152,9 +153,10 @@ def login():
 @app.route("/staff-dashboard", methods=["GET", "POST"])
 def staff_dashboard():
     staff_data = User.query.all()
+    today = datetime.today().date()
     # form = StaffRegister()
     # display = request.args.get('id')
-    return render_template("staff-dashboard.html", data=staff_data)
+    return render_template("staff-dashboard.html", data=staff_data, today=today)
 
 
 @app.route("/logout")
