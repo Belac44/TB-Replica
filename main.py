@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_uploads import IMAGES, UploadSet, configure_uploads
-from forms import PatientDetails, ImageUpload, HospitalRegister, LogIn, StaffRegister, StaffLogin
+from forms import ImageUpload, HospitalRegister, LogIn
 from flask_bootstrap import Bootstrap
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required
 from flask_sqlalchemy import SQLAlchemy
@@ -151,10 +151,10 @@ def login():
 
 @app.route("/staff-dashboard", methods=["GET", "POST"])
 def staff_dashboard():
-    # patient_data = Patient.query.all()
+    staff_data = User.query.all()
     # form = StaffRegister()
     # display = request.args.get('id')
-    return render_template("staff-dashboard.html")
+    return render_template("staff-dashboard.html", data=staff_data)
 
 
 @app.route("/logout")
