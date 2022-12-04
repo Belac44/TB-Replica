@@ -1,0 +1,27 @@
+{% include "header.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+<style>
+  .staff-login-form{
+  width:80%;
+  margin:5em auto;
+  }
+</style>
+
+<form action="{{url_for('staff_login')}}" method="post" class="staff-login-form">
+
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul class=flashes >
+      {% for message in messages %}
+      <li style="color:red">{{ message }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  {% endwith %}
+
+  {{ wtf.quick_form(form, button_map={'submit':'primary'}) }}
+
+</form>
+
+{% include "footer.html" %}

@@ -1,0 +1,55 @@
+{% include "header.html" %}
+
+<style>
+    .image-container{
+    width:80%;
+    margin:0 auto;
+    margin-top:2em;
+    }
+
+    .image-container p{
+    text-align:center;
+    }
+
+    .predicted-image{
+    width:60%
+    margin:0 auto;
+    max-width:350px;
+    }
+    img{
+    width:100%;
+    }
+    .again-button{
+    width:50%;
+    margin:0 auto;
+    }
+
+</style>
+
+<div class = "image-container" >
+    {% if prediction[0] == 0: %}
+        <p>Patient Negative of Tuberculosis</p>
+        <p>Probability of Normal:  {{prediction[1]*10}}</p>
+        <p>Probability of Tuberculosis: {{100 - prediction[1]*10}}</p>
+    {% elif prediction[0] == 1: %}
+        <p style="color:red">Patient Positive of Tuberculosis!!</p>
+        <p>Probability of Tuberculosis: {{prediction[1]*10}}</p>
+        <p>Probability of Normal: {{100- prediction[1}*10}</p>
+    {% else: %}
+        <p>Undecided!!!</p>
+    {% endif %}
+
+    <div class="predicted-image">
+        <img src="{{ url }}">
+    </div>
+    <div class="again-button">
+        <form method="get" action="{{url_for('upload_image')}}">
+            <button class="btn btn-lg btn-primary">Upload Another</button>
+        </form>
+
+    </div>
+
+</div>
+
+
+{% include "footer.html" %}
