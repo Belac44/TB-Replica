@@ -233,9 +233,9 @@ def predict():
         result = None
     return render_template("predict.html", prediction=result, url=url_passed)
 
-@app.route("/image", methods=["GET", "POST"])
-def image():
-    link = request.args.link()
+@app.route("/imageshow", methods=["GET", "POST"])
+def show_image():
+    link = request.args.get("link")
     return render_template("image.html", link=link)
 
 if __name__ == "__main__":

@@ -1,5 +1,16 @@
 {% include "header.html" %}
 
-<img src="{{link}}" alt="Not uploaded">
+<style>
+    .image_size {
+    width:50%;
+    max-height:500px;
+    max-width:500px;
+    padding:2em;
+
+    }
+</style>
+
+
+<img class = "image_size" src="{{link}}" alt="Not uploaded">
 
 {% include "footer.html" %}
