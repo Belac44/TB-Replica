@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_uploads import IMAGES, UploadSet, configure_uploads
-from forms import ImageUpload, HospitalRegister, LogIn
+from forms import ImageUpload, HospitalRegister, LogIn, PatientDetails
 from flask_bootstrap import Bootstrap
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required
 from flask_sqlalchemy import SQLAlchemy
@@ -41,16 +41,16 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(250), nullable=False)
 
 
-# class Patient(db.Model):
-#     __tablename__ = "patient"
-#
-#     id = db.Column(db.Integer, primary_key=True)
-#     name = db.Column(db.String(250), nullable=False)
-#     identification = db.Column(db.Integer, nullable=False, unique=True)
-#     age = db.Column(db.Integer, nullable=False)
-#     gender = db.Column(db.Integer, nullable=False)
-#     image_id = db.Column(db.String(250), nullable=False, unique=True)
-#     hospital = db.Column(db.String(500), nullable=False)
+class Patient(db.Model):
+    __tablename__ = "patient"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(250), nullable=False)
+    identification = db.Column(db.Integer, nullable=False, unique=True)
+    age = db.Column(db.Integer, nullable=False)
+    gender = db.Column(db.Integer, nullable=False)
+    image_id = db.Column(db.String(250), nullable=False, unique=True)
+    hospital = db.Column(db.String(500), nullable=False)
 
 
 # class Staff(db.Model):
@@ -68,7 +68,7 @@ with app.app_context():
     db.create_all()
 
 global file_url
-
+global image_id
 
 @app.route("/")
 def home():
@@ -90,7 +90,7 @@ def register():
             login_user(new_user)
         except IntegrityError:
             pass
-        return redirect(url_for('upload_image'))
+        return redirect(url_for('get_data'))
     return render_template("register.html", form=form)
 
 
@@ -127,7 +127,7 @@ def login():
         user_available = User.query.filter_by(code=form.code.data).first()
         if user_available and check_password_hash(user_available.password, form.password.data):
             login_user(user_available)
-            return redirect(url_for('upload_image'))
+            return redirect(url_for('get_data'))
         else:
             flash("Invalid Credentials")
             return redirect(url_for('login'))
@@ -169,38 +169,39 @@ def logout():
 # def handle_click():
 
 
-# @app.route("/patient", methods=["GET", "POST"])
-# def get_data():
-#     form = PatientDetails()
-#     if form.validate_on_submit():
-#         name = form.name.data
-#         identification = form.id.data
-#         age = form.age.data
-#         gender = form.gender.data
-#         image_id = form.image_id.data
-#         hospital = form.hospital.data
-#
-#         user = Patient.query.filter_by(identification=form.id.data).first()
-#         if user:
-#             flash("User already exists.Details will be saved under his/her name")
-#         else:
-#             new_patient = Patient(
-#                 name=name,
-#                 identification=identification,
-#                 age=age,
-#                 gender=gender,
-#                 image_id=image_id,
-#                 hospital=hospital
-#             )
-#             db.session.add(new_patient)
-#
-#             try:
-#                 db.session.commit()
-#             except IntegrityError:
-#                 pass
-#         return redirect(url_for('upload_image', ids=image_id))
-#
-#     return render_template("index.html", form=form)
+@app.route("/patient", methods=["GET", "POST"])
+def get_data():
+    global image_id
+    form = PatientDetails()
+    if form.validate_on_submit():
+        name = form.name.data
+        identification = form.id.data
+        age = form.age.data
+        gender = form.gender.data
+        image_id = form.image_id.data
+        hospital = form.hospital.data
+
+        user = Patient.query.filter_by(identification=form.id.data).first()
+        if user:
+            flash("User already exists.Details will be saved under his/her name")
+        else:
+            new_patient = Patient(
+                name=name,
+                identification=identification,
+                age=age,
+                gender=gender,
+                image_id=image_id,
+                hospital=hospital
+            )
+            db.session.add(new_patient)
+
+            try:
+                db.session.commit()
+            except IntegrityError:
+                pass
+        return redirect(url_for('upload_image', ids=image_id))
+
+    return render_template("index.html", form=form)
 
 
 @app.route("/image", methods=["GET", "POST"])
