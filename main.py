@@ -48,7 +48,7 @@ class Patient(db.Model):
     name = db.Column(db.String(250), nullable=False)
     identification = db.Column(db.Integer, nullable=False, unique=True)
     age = db.Column(db.Integer, nullable=False)
-    gender = db.Column(db.Integer, nullable=False)
+    gender = db.Column(db.String(10), nullable=False)
     image_id = db.Column(db.String(250), nullable=False, unique=True)
     hospital = db.Column(db.String(500), nullable=False)
 
@@ -154,9 +154,8 @@ def login():
 def staff_dashboard():
     staff_data = User.query.all()
     today = datetime.today().date()
-    # form = StaffRegister()
-    # display = request.args.get('id')
-    return render_template("staff-dashboard.html", data=staff_data, today=today)
+    patient_data = Patient.query.all()
+    return render_template("staff-dashboard.html", data=staff_data, today=today, patient_data=patient_data)
 
 
 @app.route("/logout")
@@ -165,8 +164,6 @@ def logout():
     logout_user()
     return redirect(url_for('home'))
 
-# @app.route("staff-dashboards")
-# def handle_click():
 
 
 @app.route("/patient", methods=["GET", "POST"])
@@ -230,22 +227,6 @@ def predict():
     return render_template("predict.html", prediction=result, url=url_passed)
 
 
-# def send_email(send_to):
-#     connection = smtplib.SMTP("smtp.gmail.com")
-#     connection.starttls()
-#     conncetion.login(user=os.environ['Email'], password=os.environ["Password"])
-#     num = random.randint(100000, 999999)
-#     connection.sendmail(
-#         from_addr=os.environ["Email"],
-#         to_addrs=send_to,
-#         msg=f"Subject:Verification code\n\n {num} is your TB Web Verification Code\nCode expires in 60 seconds")
-#     conncetion.close()
-
-
-# def verification(user_entry):
-#     if user_entry == send_email():
-#         return True
-#     return False
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0")
