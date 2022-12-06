@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_uploads import IMAGES, UploadSet, configure_uploads
 from forms import ImageUpload, HospitalRegister, LogIn, PatientDetails
 from flask_bootstrap import Bootstrap
-from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required
+from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from flask_sqlalchemy import SQLAlchemy
 # from model_build import ModelBuild
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -207,6 +207,13 @@ def upload_image():
     if form.validate_on_submit() and 'photo' in request.files:
         image_url = photos.save(form.photo.data)
         file_url = photos.path(filename=image_url)
+        available_user = Patient.query.get(current_user.id)
+        available_user.image_id = file_url
+        try:
+            db.session.commit()
+            print("Update successful")
+        except IntegrityError:
+            pass
         return redirect(url_for('predict', url=file_url))
     return render_template("upload.html", form=form)
 
@@ -226,7 +233,10 @@ def predict():
         result = None
     return render_template("predict.html", prediction=result, url=url_passed)
 
-
+@app.route("/image", methods=["GET", "POST"])
+def image():
+    link = request.args.link()
+    return render_template("image.html", link=link)
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0")

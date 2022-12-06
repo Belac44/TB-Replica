@@ -281,6 +281,7 @@ table td{
                 <th>Name</th>
                 <th>Age</th>
                 <th>Gender</th>
+                <th>IMG</th>
               </tr>
             </thead>
             <tbody>
@@ -290,6 +291,7 @@ table td{
                 <td>{{data.name}}</td>
                 <td>{{data.age}}</td>
                 <td>{{data.gender}}</td>
+                <td><a href="{{url_for('image', link=data.image_id)}}">img</a></td>
               </tr>
         {% endfor %}
             </tbody>
